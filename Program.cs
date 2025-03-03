@@ -2,7 +2,7 @@
 
 namespace HotelManagementSystem
 {
-    // Custom LinkedList Node 
+    // Custom LinkedList Node hi
     public class Node<T>
     {
         public T Data { get; set; }

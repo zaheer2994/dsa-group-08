@@ -15,7 +15,7 @@ namespace HotelManagementSystem
         }
     }
 
-    // Custom LinkedList
+    // Custom Linked Listt
     public class CustomLinkedList<T>
     {
         public Node<T> Head { get; set; }
@@ -84,6 +84,53 @@ namespace HotelManagementSystem
         public Node<T> First => Head;
     }
 
+    static class Utility
+    {
+        public static int GetIntInput(string message)
+        {
+            int input;
+            Console.Write(message);
+            while (!int.TryParse(Console.ReadLine(), out input))
+            {
+                Console.Write("Invalid input. Please enter a valid number: ");
+            }
+            return input;
+        }
+
+        public static decimal GetDecimalInput(string message)
+        {
+            decimal input;
+            Console.Write(message);
+            while (!decimal.TryParse(Console.ReadLine(), out input))
+            {
+                Console.Write("Invalid input. Please enter a valid decimal: ");
+            }
+            return input;
+        }
+
+        public static string GetNonEmptyString(string message)
+        {
+            string? input;
+            do
+            {
+                Console.Write(message);
+                input = Console.ReadLine()?.Trim();
+            } while (string.IsNullOrWhiteSpace(input));
+
+            return input;
+        }
+
+        public static bool GetBoolInput(string message)
+        {
+            bool input;
+            Console.Write(message);
+            while (!bool.TryParse(Console.ReadLine(), out input))
+            {
+                Console.Write("Invalid input. Please enter 'true' or 'false': ");
+            }
+            return input;
+        }
+    }
     // Customer Class
     public class Customer
     {
@@ -636,7 +683,7 @@ namespace HotelManagementSystem
                 Console.WriteLine("Press C if you are a CUSTOMER");
                 Console.WriteLine("Press E if you are an EMPLOYEE");
                 Console.WriteLine("Press X to EXIT");
-                string h = Console.ReadLine();
+                string h = Utility.GetNonEmptyString("");
 
                 if (h == "c" || h == "C")
                 {
@@ -707,218 +754,239 @@ namespace HotelManagementSystem
                     Console.WriteLine("S for Staff");
                     Console.WriteLine("M for Manager");
                     Console.WriteLine("Back to Main Menu --- X");
-                    string v = Console.ReadLine();
+                    string v = Utility.GetNonEmptyString("");
 
                     if (v == "s" || v == "S")
                     {
+
                         Console.Clear();
                         Console.WriteLine("====================================");
                         Console.WriteLine("           STAFF MENU             ");
                         Console.WriteLine("====================================");
-                        Console.WriteLine("Enter ID:");
-                        string g = Console.ReadLine(); // Employee ID input
 
-                        Console.WriteLine("Enter Password:");
-                        string inputPassword = Console.ReadLine(); // Password input as string
+                        // Use Utility.GetNonEmptyString for Employee ID input
+                        string g = Utility.GetNonEmptyString("Enter ID: ");
 
-                        if (int.TryParse(inputPassword, out int password))
+                        // Use Utility.GetIntInput for Password input
+                        int password = Utility.GetIntInput("Enter Password: ");
+
+                        // Validate the employee
+                        Employee validatedEmployee = employeeManagement.ValidateEmployee(g, password);
+
+                        if (validatedEmployee != null)
                         {
-                            Employee validatedEmployee = employeeManagement.ValidateEmployee(g, password);
+                            Console.WriteLine($"Employee {validatedEmployee.Name} validated successfully.");
+                            Console.WriteLine($"ID: {validatedEmployee.EmployeeID}, Gender: {validatedEmployee.EmployeeGender}");
 
-                            if (validatedEmployee != null)
+                            // Use Utility.GetNonEmptyString for menu selection
+                            string t = Utility.GetNonEmptyString("Press I ----> Clock in\nPress O ----> Clock out\nBack to Main Menu --- X\n");
+
+                            if (t == "i" || t == "I")
                             {
-                                Console.WriteLine($"Employee {validatedEmployee.Name} validated successfully.");
-                                Console.WriteLine($"ID: {validatedEmployee.EmployeeID}, Gender: {validatedEmployee.EmployeeGender}");
-
-                                Console.WriteLine("Press I ----> Clock in");
-                                Console.WriteLine("Press O ----> Clock out");
-                                Console.WriteLine("Back to Main Menu --- X");
-                                string t = Console.ReadLine();
-
-                                if (t == "i" || t == "I")
-                                {
-                                    employeeManagement.ClockingIn(validatedEmployee);
-                                }
-                                else if (t == "o" || t == "O")
-                                {
-                                    employeeManagement.ClockingOut(validatedEmployee);
-                                }
-                                else if (t == "x" || t == "X")
-                                {
-                                    break; // Return to the main menu
-                                }
-                                else
-                                {
-                                    Console.WriteLine("Invalid input. Please try again.");
-                                }
+                                employeeManagement.ClockingIn(validatedEmployee);
+                            }
+                            else if (t == "o" || t == "O")
+                            {
+                                employeeManagement.ClockingOut(validatedEmployee);
+                            }
+                            else if (t == "x" || t == "X")
+                            {
+                                // Return to the main menu
                             }
                             else
                             {
-                                Console.WriteLine("Invalid ID or Password.");
+                                Console.WriteLine("Invalid input. Please try again.");
                             }
                         }
                         else
                         {
-                            Console.WriteLine("Invalid ID or password. Please try again.");
+                            Console.WriteLine("Invalid ID or Password.");
                             Thread.Sleep(3000);
                         }
                     }
                     else if (v == "m" || v == "M")
                     {
-                        Console.Write("Enter Password: ");
-                        string managerPasswordInput = Console.ReadLine();
 
-                        if (int.TryParse(managerPasswordInput, out int p) && p == mP)
+                        while (true)
                         {
-                            Console.Clear();
-                            Console.WriteLine("====================================");
-                            Console.WriteLine("           MANAGER MENU           ");
-                            Console.WriteLine("====================================");
-                            Console.WriteLine("S ----> Staff");
-                            Console.WriteLine("C ----> Customers");
-                            Console.WriteLine("Back to Main Menu --- X");
-                            string d = Console.ReadLine();
-
-                            while (true)
+                            Console.Write("Enter Password: ");
+                            string managerPasswordInput = Console.ReadLine();
+                            if (int.TryParse(managerPasswordInput, out int p) && p == mP)
                             {
-                                if (d == "s" || d == "S")
+
+
+                                while (true)
                                 {
+
                                     Console.Clear();
                                     Console.WriteLine("====================================");
-                                    Console.WriteLine("           STAFF MANAGEMENT         ");
+                                    Console.WriteLine("           MANAGER MENU           ");
                                     Console.WriteLine("====================================");
-                                    Console.WriteLine("V             ----> View Employees");
-                                    Console.WriteLine("F             ----> Fire Employees");
-                                    Console.WriteLine("A             ----> Add Employees");
+                                    Console.WriteLine("S ----> Staff");
+                                    Console.WriteLine("C ----> Customers");
                                     Console.WriteLine("Back to Main Menu --- X");
-                                    string y = Console.ReadLine();
+                                    string d = Console.ReadLine();
 
-                                    if (y == "v" || y == "V")
+                                    if (d == "s" || d == "S")
                                     {
-                                        employeeManagement.InsertionSortEmployees(); // Sort employees before displaying
-                                        employeeManagement.DisplayEmployees();
+                                        while (true)
+                                        {
+                                            Console.Clear();
+                                            Console.WriteLine("====================================");
+                                            Console.WriteLine("           STAFF MANAGEMENT         ");
+                                            Console.WriteLine("====================================");
+                                            Console.WriteLine("V             ----> View Employees");
+                                            Console.WriteLine("F             ----> Fire Employees");
+                                            Console.WriteLine("A             ----> Add Employees");
+                                            Console.WriteLine("Back to Main Menu --- X");
+                                            string y = Console.ReadLine();
+
+                                            if (y == "v" || y == "V")
+                                            {
+                                                employeeManagement.InsertionSortEmployees(); // Sort employees before displaying
+                                                employeeManagement.DisplayEmployees();
+                                                Console.WriteLine("Press any key to continue...");
+                                                Console.ReadKey();
+                                            }
+                                            else if (y == "A" || y == "a")
+                                            {
+                                                while (true)
+                                                {
+                                                    Console.Clear();
+                                                    Console.WriteLine("====================================");
+                                                    Console.WriteLine("           ADD EMPLOYEE            ");
+                                                    Console.WriteLine("====================================");
+                                                    Console.WriteLine("H ----> House Keeping");
+                                                    Console.WriteLine("S ----> Security Guard");
+                                                    Console.WriteLine("Back to Main Menu --- X");
+                                                    string w = Console.ReadLine();
+
+                                                    if (w == "h" || w == "H")
+                                                    {
+                                                        string name = Utility.GetNonEmptyString("Name: ");
+                                                        int age = Utility.GetIntInput("Age: ");
+                                                        string gen = Utility.GetNonEmptyString("Gender: ");
+                                                        string phoneno = Utility.GetNonEmptyString("Phone No: ");
+                                                        string id = Utility.GetNonEmptyString("Employee ID: ");
+                                                        bool av = Utility.GetBoolInput("Availability at the moment: ");
+                                                        int pw = Utility.GetIntInput("Employee Password: ");
+                                                        int payyy = Utility.GetIntInput("Employee Pay: ");
+
+
+                                                        employeeManagement.AddEmployee(new HouseKeeping(name, age, gen, phoneno, id, av, pw, payyy));
+                                                        Thread.Sleep(3000);
+
+                                                    }
+                                                    else if (w == "s" || w == "S")
+                                                    {
+                                                        string ame = Utility.GetNonEmptyString("Name: ");
+                                                        int ge = Utility.GetIntInput("Age: ");
+                                                        string en = Utility.GetNonEmptyString("Gender: ");
+                                                        string honeno = Utility.GetNonEmptyString("Phone No: ");
+                                                        string ida = Utility.GetNonEmptyString("Employee ID: ");
+                                                        bool ava = Utility.GetBoolInput("Availability at the moment: ");
+                                                        int pwa = Utility.GetIntInput("Employee Password: ");
+                                                        int payyyy = Utility.GetIntInput("Employee Pay: ");
+
+                                                        employeeManagement.AddEmployee(new SecurityGuard(ame, ge, en, honeno, ida, ava, pwa, payyyy));
+                                                        Thread.Sleep(3000);
+
+                                                    }
+                                                    else if (w == "x" || w == "X")
+                                                    {
+                                                        break; // Return to the main menu
+                                                    }
+                                                    else
+                                                    {
+                                                        Console.WriteLine("Invalid input. Please try again.");
+                                                    }
+                                                }
+
+                                            }
+                                            else if (y == "f" || y == "F")
+                                            {
+                                                while (true)
+                                                {
+                                                    Console.Clear();
+                                                    Console.WriteLine("====================================");
+                                                    Console.WriteLine("           FIRE EMPLOYEE           ");
+                                                    Console.WriteLine("====================================");
+                                                    Console.WriteLine("H ----> House Keeping");
+                                                    Console.WriteLine("S ----> Security Guard");
+                                                    Console.WriteLine("Back to Main Menu --- X");
+                                                    string w = Console.ReadLine();
+
+                                                    if (w == "h" || w == "H")
+                                                    {
+                                                        Console.WriteLine("ID of Employee to be Fired: ");
+                                                        string k = Console.ReadLine();
+                                                        employeeManagement.RemoveEmployee(k);
+                                                        Thread.Sleep(3000);
+                                                    }
+                                                    else if (w == "s" || w == "S")
+                                                    {
+                                                        Console.WriteLine("ID of Employee to be Fired: ");
+                                                        string k = Console.ReadLine();
+                                                        employeeManagement.RemoveEmployee(k);
+                                                        Thread.Sleep(3000);
+                                                    }
+                                                    else if (w == "x" || w == "X")
+                                                    {
+                                                        break; // Return to the main menu
+                                                    }
+                                                    else
+                                                    {
+                                                        Console.WriteLine("Invalid input. Please try again.");
+                                                    }
+                                                }
+
+                                            }
+                                            else if (y == "x" || y == "X")
+                                            {
+                                                break; // Return to the main menu
+                                            }
+                                            else
+                                            {
+                                                Console.WriteLine("Invalid input. Please try again.");
+                                            }
+                                        }
+
+                                    }
+                                    else if (d == "c" || d == "C")
+                                    {
+                                        Console.Clear();
+                                        Console.WriteLine("====================================");
+                                        Console.WriteLine("           CUSTOMER LIST           ");
+                                        Console.WriteLine("====================================");
+                                        Console.WriteLine("List of Customers (Sorted by Name):");
+                                        customerManagement.DisplayCustomers();
                                         Console.WriteLine("Press any key to continue...");
                                         Console.ReadKey();
+                                        break;
                                     }
-                                    else if (y == "A" || y == "a")
-                                    {
-                                        Console.Clear();
-                                        Console.WriteLine("====================================");
-                                        Console.WriteLine("           ADD EMPLOYEE            ");
-                                        Console.WriteLine("====================================");
-                                        Console.WriteLine("H ----> House Keeping");
-                                        Console.WriteLine("S ----> Security Guard");
-                                        Console.WriteLine("Back to Main Menu --- X");
-                                        string w = Console.ReadLine();
-
-                                        if (w == "h" || w == "H")
-                                        {
-                                            Console.WriteLine("Name: "); string name = Console.ReadLine();
-                                            Console.WriteLine("Age: "); int age = int.Parse(Console.ReadLine());
-                                            Console.WriteLine("Gender: "); string gen = Console.ReadLine();
-                                            Console.WriteLine("Phone No: "); string phoneno = Console.ReadLine();
-                                            Console.WriteLine("Employee ID: "); string id = Console.ReadLine();
-                                            Console.WriteLine("Availability at the moment: "); bool av = Convert.ToBoolean(Console.ReadLine());
-                                            Console.WriteLine("Employee Password: "); int pw = Convert.ToInt32(Console.ReadLine());
-                                            Console.WriteLine("Employee Pay: "); int payyy = Convert.ToInt32(Console.ReadLine());
-
-                                            employeeManagement.AddEmployee(new HouseKeeping(name, age, gen, phoneno, id, av, pw, payyy));
-                                            Thread.Sleep(3000);
-
-                                        }
-                                        else if (w == "s" || w == "S")
-                                        {
-                                            Console.WriteLine("Name: "); string ame = Console.ReadLine();
-                                            Console.WriteLine("Age: "); int ge = int.Parse(Console.ReadLine());
-                                            Console.WriteLine("Gender: "); string en = Console.ReadLine();
-                                            Console.WriteLine("Phone No: "); string honeno = Console.ReadLine();
-                                            Console.WriteLine("Employee ID: "); string ida = Console.ReadLine();
-                                            Console.WriteLine("Availability at the moment: "); bool ava = Convert.ToBoolean(Console.ReadLine());
-                                            Console.WriteLine("Employee Password: "); int pwa = Convert.ToInt32(Console.ReadLine());
-                                            Console.WriteLine("Employee Pay: "); int payyyy = Convert.ToInt32(Console.ReadLine());
-
-                                            employeeManagement.AddEmployee(new SecurityGuard(ame, ge, en, honeno, ida, ava, pwa, payyyy));
-                                            Thread.Sleep(3000);
-
-                                        }
-                                        else if (w == "x" || w == "X")
-                                        {
-                                            break; // Return to the main menu
-                                        }
-                                        else
-                                        {
-                                            Console.WriteLine("Invalid input. Please try again.");
-                                        }
-                                    }
-                                    else if (y == "f" || y == "F")
-                                    {
-                                        Console.Clear();
-                                        Console.WriteLine("====================================");
-                                        Console.WriteLine("           FIRE EMPLOYEE           ");
-                                        Console.WriteLine("====================================");
-                                        Console.WriteLine("H ----> House Keeping");
-                                        Console.WriteLine("S ----> Security Guard");
-                                        Console.WriteLine("Back to Main Menu --- X");
-                                        string w = Console.ReadLine();
-
-                                        if (w == "h" || w == "H")
-                                        {
-                                            Console.WriteLine("ID of Employee to be Fired: ");
-                                            string k = Console.ReadLine();
-                                            employeeManagement.RemoveEmployee(k);
-                                            Thread.Sleep(3000);
-                                        }
-                                        else if (w == "s" || w == "S")
-                                        {
-                                            Console.WriteLine("ID of Employee to be Fired: ");
-                                            string k = Console.ReadLine();
-                                            employeeManagement.RemoveEmployee(k);
-                                            Thread.Sleep(3000);
-                                        }
-                                        else if (w == "x" || w == "X")
-                                        {
-                                            break; // Return to the main menu
-                                        }
-                                        else
-                                        {
-                                            Console.WriteLine("Invalid input. Please try again.");
-                                        }
-                                    }
-                                    else if (y == "x" || y == "X")
+                                    else if (d == "x" || d == "X")
                                     {
                                         break; // Return to the main menu
                                     }
                                     else
                                     {
                                         Console.WriteLine("Invalid input. Please try again.");
+                                        Thread.Sleep(2000);
+
                                     }
-                                }
-                                else if (d == "c" || d == "C")
-                                {
-                                    Console.Clear();
-                                    Console.WriteLine("====================================");
-                                    Console.WriteLine("           CUSTOMER LIST           ");
-                                    Console.WriteLine("====================================");
-                                    Console.WriteLine("List of Customers (Sorted by Name):");
-                                    customerManagement.DisplayCustomers();
-                                    Console.WriteLine("Press any key to continue...");
-                                    Console.ReadKey();
                                     break;
                                 }
-                                else if (d == "x" || d == "X")
-                                {
-                                    break; // Return to the main menu
-                                }
-                                else
-                                {
-                                    Console.WriteLine("Invalid input. Please try again.");
-                                }
+                                break;
+                            }
+                            else
+                            {
+                                Console.WriteLine("Invalid Password. Please Try Again.");
+
+
                             }
                         }
-                        else
-                        {
-                            Console.WriteLine("Invalid Password. Please Try Again.");
-                        }
+
+
                     }
                     else if (v == "x" || v == "X")
                     {
